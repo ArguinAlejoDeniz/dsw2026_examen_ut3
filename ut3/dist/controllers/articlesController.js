@@ -2,6 +2,7 @@
 // and answers. Errors are thrown as AppError and handed to the central
 // errorHandler with next(err).
 import { AppError } from '../errors/AppError.js';
+import { AppErrorDescription } from '../errors/AppErrorDescription.js';
 import * as articlesService from '../services/articlesService.js';
 export function list(req, res, next) {
     try {
@@ -47,6 +48,19 @@ export function update(req, res, next) {
         const article = articlesService.update(String(req.params.articleId), { title, description });
         if (!article) {
             throw new AppError(404, `Article with id '${req.params.articleId}' not found`, 'NOT_FOUND');
+        }
+        res.json({ data: article });
+    }
+    catch (err) {
+        next(err);
+    }
+}
+export function comprobate(req, res, next) {
+    try {
+        const { description } = req.body;
+        const article = articlesService.comprobate(String(req.params.articleId), { description });
+        if (description !== 'ERRROR') {
+            throw new AppErrorDescription(400, `Description must not contain ERROR`, 'INVALID_DESCRIPTION');
         }
         res.json({ data: article });
     }

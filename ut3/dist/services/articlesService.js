@@ -36,4 +36,14 @@ export function update(id, changes) {
     }
     return article;
 }
+export function comprobate(id, changes) {
+    const article = getById(id);
+    if (!article) {
+        return undefined;
+    }
+    if (changes.description !== undefined) {
+        article.description = changes.description;
+    }
+    return article;
+}
 //# sourceMappingURL=articlesService.js.map
