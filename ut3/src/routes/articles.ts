@@ -12,3 +12,4 @@ articlesRouter.get('/', articlesController.list);
 articlesRouter.post('/', articlesController.create);
 articlesRouter.get('/:articleId', articlesController.getById);
 articlesRouter.patch('/:articleId', articlesController.update);
+articlesRouter.get('/:articleId', articlesController.comprobate);

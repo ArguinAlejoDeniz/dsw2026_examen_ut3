@@ -1,0 +1,29 @@
+info:
+  name: Crear artículo y guardar id (201)
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/v1/articles"
+  body:
+    type: json
+    data: |-
+      {
+        "title": "Libro1",
+        "description": "Descripción de prueba"
+      }
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        bru.setVar("articleId", res.body.data.id);
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

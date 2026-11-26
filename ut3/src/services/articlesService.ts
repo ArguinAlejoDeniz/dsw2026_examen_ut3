@@ -54,3 +54,14 @@ export function update(id: string, changes: ArticleChanges): Article | undefined
   }
   return article;
 }
+
+export function comprobate(id: string, changes: ArticleChanges): Article | undefined {
+  const article = getById(id);
+  if (!article) {
+    return undefined;
+  }
+  if (changes.description !== undefined) {
+    article.description = changes.description;
+  }
+  return article;
+}

@@ -1,0 +1,16 @@
+info:
+  name: Actualizar sin cuerpo (400)
+  type: http
+  seq: 20
+
+http:
+  method: PATCH
+  url: "{{baseUrl}}/api/v1/articles/{{articleId}}"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

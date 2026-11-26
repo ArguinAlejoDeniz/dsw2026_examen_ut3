@@ -1,0 +1,23 @@
+info:
+  name: Actualizar título espacios + descripción válida (400, no se guarda nada)
+  type: http
+  seq: 18
+
+http:
+  method: PATCH
+  url: "{{baseUrl}}/api/v1/articles/{{articleId}}"
+  body:
+    type: json
+    data: |-
+      {
+        "title": "   ",
+        "description": "Esta descripción no debería guardarse"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

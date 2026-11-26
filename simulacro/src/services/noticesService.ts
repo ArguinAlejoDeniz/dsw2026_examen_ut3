@@ -1,18 +1,27 @@
-import { randomUUID } from 'node:crypto';
+// noticesService.ts — Capa de servicio para el recurso "avisos/noticias".
+// Almacena los avisos en un array en memoria y expone funciones CRUD puras.
+// Tiene una particularidad respecto a documentsService: description es siempre
+// string (no opcional) y la función list admite un parámetro de búsqueda por título.
+// Es llamado desde noticesController.ts.
 
+import { randomUUID } from 'node:crypto'; // UUID v4 de Node.js (sin dependencias externas)
+
+// Interfaz que define la forma de un aviso almacenado
 interface Notice {
-  id: string;
-  title: string;
-  description: string;
-  createdAt: string;
+  id: string;          // UUID único
+  title: string;       // Título del aviso (obligatorio)
+  description: string; // Descripción (obligatoria en notices, a diferencia de documents donde es opcional)
+  createdAt: string;   // Fecha de creación en formato ISO 8601
 }
 
+// Interfaz para los campos que se pueden actualizar parcialmente (PATCH)
 export interface NoticeChanges {
-  title?: string;
-  description?: string;
+  title?: string;       // Nuevo título (undefined = no cambiar)
+  description?: string; // Nueva descripción (undefined = no cambiar)
 }
 
 // Array en memoria para almacenar los documentos temporalmente
+// Datos de ejemplo precargados para el simulacro
 const notices: Notice[] = [
   {
     id: '11111111-1111-4111-8111-111111111111',
@@ -46,44 +55,53 @@ const notices: Notice[] = [
   },
 ];
 
+// Devuelve una página de avisos, opcionalmente filtrada por texto en el título.
+// search: si se proporciona, filtra los avisos cuyo título contiene la cadena (case-insensitive).
+// Después de filtrar, aplica la paginación sobre el subconjunto resultante.
 export function list(page: number, limit: number, search?: string) {
   const filtered = search
-    ? notices.filter((n) => n.title.toLowerCase().includes(search.toLowerCase()))
-    : notices;
+    ? notices.filter((n) => n.title.toLowerCase().includes(search.toLowerCase())) // Filtra por título si hay búsqueda
+    : notices; // Sin búsqueda, usa todos los avisos
 
-  const start = (page - 1) * limit;
+  const start = (page - 1) * limit; // Índice del primer elemento de la página
   return {
-    data: filtered.slice(start, start + limit),
+    data: filtered.slice(start, start + limit), // Página del subconjunto filtrado
     pagination: {
       page,
       limit,
-      total: filtered.length,
+      total: filtered.length, // Total de avisos FILTRADOS (no el total global), para paginar correctamente
     },
   };
 }
 
+// Busca un aviso por su UUID. Devuelve undefined si no existe.
 export function getById(id: string): Notice | undefined {
-  return notices.find((d) => d.id === id);
+  return notices.find((d) => d.id === id); // Búsqueda lineal en el array en memoria
 }
 
+// Crea un nuevo aviso con UUID generado y fecha actual.
+// description es obligatoria en la interfaz Notice; si no se pasa, se guarda como cadena vacía.
 export function create(title: string, description?: string): Notice {
   const newNotice: Notice = {
-    id: randomUUID(),
+    id: randomUUID(),           // UUID único
     title,
-    description: description ?? '',
+    description: description ?? '', // Si description es undefined, se almacena como '' (string vacío)
     createdAt: new Date().toISOString(),
   };
 
-  notices.push(newNotice);
-  return newNotice;
+  notices.push(newNotice); // Guarda en memoria
+  return newNotice;        // Devuelve el aviso creado para la respuesta 201
 }
 
+// Actualiza los campos especificados de un aviso existente.
+// Devuelve undefined si el id no existe (el controller lanzará ResourceNotFoundError).
 export function update(id: string, changes: NoticeChanges): Notice | undefined {
-  const document = getById(id);
+  const document = getById(id); // Reutiliza getById para buscar el aviso
   if (!document) {
     return undefined;
   }
 
+  // Solo sobrescribe los campos que se incluyeron en el PATCH
   if (changes.title !== undefined) {
     document.title = changes.title;
   }
@@ -92,5 +110,5 @@ export function update(id: string, changes: NoticeChanges): Notice | undefined {
     document.description = changes.description;
   }
 
-  return document;
+  return document; // Devuelve el aviso mutado con los nuevos valores
 }

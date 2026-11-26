@@ -1,0 +1,16 @@
+info:
+  name: Listar page no numérica (400)
+  type: http
+  seq: 22
+
+http:
+  method: GET
+  url: "{{baseUrl}}/api/v1/articles?page=abc"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

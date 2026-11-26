@@ -1,0 +1,22 @@
+info:
+  name: Actualizar artículo inexistente (404)
+  type: http
+  seq: 15
+
+http:
+  method: PATCH
+  url: "{{baseUrl}}/api/v1/articles/no-existe"
+  body:
+    type: json
+    data: |-
+      {
+        "title": "Da igual"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
